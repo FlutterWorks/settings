@@ -1,9 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:settings/constants.dart';
+import 'package:settings/l10n/l10n.dart';
 import 'package:settings/services/settings_service.dart';
 import 'package:settings/view/pages/sound/sound_model.dart';
-import 'package:settings/view/widgets/settings_section.dart';
-import 'package:settings/view/widgets/switch_settings_row.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
 
 class SoundPage extends StatelessWidget {
   const SoundPage({Key? key}) : super(key: key);
@@ -16,28 +17,37 @@ class SoundPage extends StatelessWidget {
     );
   }
 
+  static Widget createTitle(BuildContext context) =>
+      Text(context.l10n.soundPageTitle);
+
+  static bool searchMatches(String value, BuildContext context) => value
+          .isNotEmpty
+      ? context.l10n.soundPageTitle.toLowerCase().contains(value.toLowerCase())
+      : false;
+
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<SoundModel>(context);
+    final model = context.watch<SoundModel>();
 
-    return Column(
+    return YaruPage(
       children: [
-        SettingsSection(
+        YaruSection(
+          width: kDefaultWidth,
           headline: 'System',
           children: [
-            SwitchSettingsRow(
+            YaruSwitchRow(
               trailingWidget: const Text('Allow Volume Above 100%'),
               value: model.allowAbove100,
               onChanged: (value) => model.setAllowAbove100(value),
             ),
-            SwitchSettingsRow(
+            YaruSwitchRow(
               trailingWidget: const Text('Event Sounds'),
               actionDescription:
                   'Notify of a system action, notification or event',
               value: model.eventSounds,
               onChanged: (value) => model.setEventSounds(value),
             ),
-            SwitchSettingsRow(
+            YaruSwitchRow(
               trailingWidget: const Text('Input Feedback Sounds'),
               actionDescription: 'Feedback for user input events, '
                   'such as mouse clicks, or key presses',

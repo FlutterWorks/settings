@@ -2,141 +2,170 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:settings/view/pages/accessibility/accessibility_page.dart';
 import 'package:settings/view/pages/appearance/appearance_page.dart';
+import 'package:settings/view/pages/apps/apps_page.dart';
+import 'package:settings/view/pages/bluetooth/bluetooth_page.dart';
+import 'package:settings/view/pages/color/color_page.dart';
+import 'package:settings/view/pages/connections/connections_page.dart';
+import 'package:settings/view/pages/date_and_time/date_time_page.dart';
+import 'package:settings/view/pages/default_apps/default_apps_page.dart';
+import 'package:settings/view/pages/displays/displays_page.dart';
 import 'package:settings/view/pages/info/info_page.dart';
-import 'package:settings/view/pages/keyboard_shortcuts/keyboard_shortcuts_page.dart';
+import 'package:settings/view/pages/keyboard/keyboard_page.dart';
 import 'package:settings/view/pages/mouse_and_touchpad/mouse_and_touchpad_page.dart';
-import 'package:settings/view/pages/removable_media/removable_media_page.dart';
+import 'package:settings/view/pages/multitasking/multi_tasking_page.dart';
 import 'package:settings/view/pages/notifications/notifications_page.dart';
+import 'package:settings/view/pages/online_accounts/online_accounts_page.dart';
 import 'package:settings/view/pages/power/power_page.dart';
+import 'package:settings/view/pages/privacy/privacy_page.dart';
+import 'package:settings/view/pages/region_and_language/region_and_language_page.dart';
+import 'package:settings/view/pages/removable_media/removable_media_page.dart';
+import 'package:settings/view/pages/search/search_page.dart';
 import 'package:settings/view/pages/sound/sound_page.dart';
+import 'package:settings/view/pages/users/users.dart';
 import 'package:settings/view/pages/wallpaper/wallpaper_page.dart';
-import 'package:settings/view/widgets/page_item.dart';
-import 'package:yaru_icons/widgets/yaru_icons.dart';
+import 'package:yaru_icons/yaru_icons.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
 
-final pageItems = <PageItem>[
-  PageItem(
-    title: 'WIFI',
-    iconData: YaruIcons.network_wireless,
-    builder: (_) => const Text('WIFI'),
-  ),
-  PageItem(
-    title: 'Network',
-    iconData: YaruIcons.network,
-    builder: (_) => const Text('Network'),
-  ),
-  PageItem(
-    title: 'Bluetooth',
-    iconData: YaruIcons.bluetooth,
-    builder: (_) => const Text('Bluetooth'),
-  ),
-  const PageItem(
-    title: 'Wallpaper',
-    iconData: YaruIcons.desktop_wallpaper,
-    builder: WallpaperPage.create,
-  ),
-  const PageItem(
-    title: 'Appearance',
-    iconData: YaruIcons.desktop_panel_look,
-    builder: AppearancePage.create,
-  ),
-  const PageItem(
-    title: 'Notifications',
-    iconData: YaruIcons.notification,
-    builder: NotificationsPage.create,
-  ),
-  PageItem(
-    title: 'Search',
-    iconData: YaruIcons.search,
-    builder: (_) => const Text('Search'),
-  ),
-  PageItem(
-    title: 'Apps',
-    iconData: YaruIcons.app_grid,
-    builder: (_) => const Text('Apps'),
-  ),
-  PageItem(
-    title: 'Security',
-    iconData: YaruIcons.lock,
-    builder: (_) => const Text('Security'),
-  ),
-  PageItem(
-    title: 'Online Accounts',
-    iconData: YaruIcons.desktop_online_accounts,
-    builder: (_) => const Text('Online Accounts'),
-  ),
-  PageItem(
-    title: 'Sharing',
-    iconData: YaruIcons.share,
-    builder: (_) => const Text('Sharing'),
-  ),
-  const PageItem(
-    title: 'Sound',
-    iconData: YaruIcons.audio,
-    builder: SoundPage.create,
-  ),
-  const PageItem(
-    title: 'Power',
-    iconData: YaruIcons.power,
-    builder: PowerPage.create,
-  ),
-  PageItem(
-    title: 'Displays',
-    iconData: YaruIcons.desktop_display,
-    builder: (_) => const Text('Displays'),
-  ),
-  const PageItem(
-    title: 'Mouse and touchpad',
-    iconData: YaruIcons.input_mouse,
-    builder: MouseAndTouchpadPage.create,
-  ),
-  const PageItem(
-    title: 'Keyboard shortcuts',
-    iconData: YaruIcons.input_keyboard,
-    builder: KeyboardShortcutsPage.create,
-  ),
-  PageItem(
-    title: 'Printers',
-    iconData: YaruIcons.printer,
-    builder: (_) => const Text('Printers'),
-  ),
-  const PageItem(
-    title: 'Removable Media',
-    iconData: YaruIcons.media_removable,
-    builder: RemovableMediaPage.create,
-  ),
-  PageItem(
-    title: 'Color',
-    iconData: YaruIcons.colors,
-    builder: (_) => const Text('Color'),
-  ),
-  PageItem(
-    title: 'Region and language',
-    iconData: YaruIcons.localization,
-    builder: (_) => const Text('Region and language'),
-  ),
-  const PageItem(
-    title: 'Accessibility',
-    iconData: YaruIcons.accessibility,
-    builder: AccessibilityPage.create,
-  ),
-  PageItem(
-    title: 'Users',
-    iconData: YaruIcons.users,
-    builder: (_) => const Text('Users'),
-  ),
-  PageItem(
-    title: 'Preferred Apps',
-    iconData: YaruIcons.star,
-    builder: (_) => const Text('Preferred Apps'),
-  ),
-  PageItem(
-    title: 'Date and time',
-    iconData: YaruIcons.clock,
-    builder: (_) => const Text('Date and time'),
-  ),
-  const PageItem(
-    title: 'Info',
-    iconData: YaruIcons.information,
-    builder: InfoPage.create,
-  ),
-];
+List<YaruPageItem> getPageItems(BuildContext context) => [
+      const YaruPageItem(
+        titleBuilder: ConnectionsPage.createTitle,
+        iconData: YaruIcons.network,
+        builder: ConnectionsPage.create,
+        searchMatches: ConnectionsPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: BluetoothPage.createTitle,
+        iconData: YaruIcons.bluetooth,
+        builder: BluetoothPage.create,
+        searchMatches: BluetoothPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: WallpaperPage.createTitle,
+        iconData: YaruIcons.desktop_wallpaper,
+        builder: WallpaperPage.create,
+        searchMatches: WallpaperPage.searchMatches,
+      ),
+      const YaruPageItem(
+          titleBuilder: AppearancePage.createTitle,
+          iconData: YaruIcons.desktop_panel_look,
+          builder: AppearancePage.create,
+          searchMatches: AppearancePage.searchMatches),
+      const YaruPageItem(
+        titleBuilder: PrivacyPage.createTitle,
+        builder: PrivacyPage.create,
+        searchMatches: PrivacyPage.searchMatches,
+        iconData: YaruIcons.lock,
+      ),
+      const YaruPageItem(
+        titleBuilder: MultiTaskingPage.createTitle,
+        builder: MultiTaskingPage.create,
+        iconData: YaruIcons.windows,
+        searchMatches: MultiTaskingPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: NotificationsPage.createTitle,
+        iconData: YaruIcons.notification,
+        builder: NotificationsPage.create,
+        searchMatches: NotificationsPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: SearchPage.createTitle,
+        iconData: YaruIcons.search,
+        builder: SearchPage.create,
+        searchMatches: SearchPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: AppsPage.createTitle,
+        iconData: YaruIcons.app_grid,
+        builder: AppsPage.create,
+        searchMatches: AppsPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: OnlineAccountsPage.createTitle,
+        iconData: YaruIcons.desktop_online_accounts,
+        builder: OnlineAccountsPage.create,
+        searchMatches: OnlineAccountsPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: SoundPage.createTitle,
+        iconData: YaruIcons.audio,
+        builder: SoundPage.create,
+        searchMatches: SoundPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: PowerPage.createTitle,
+        iconData: YaruIcons.power,
+        builder: PowerPage.create,
+        searchMatches: PowerPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: DisplaysPage.createTitle,
+        iconData: YaruIcons.desktop_display,
+        builder: DisplaysPage.create,
+      ),
+      const YaruPageItem(
+        titleBuilder: MouseAndTouchpadPage.createTitle,
+        iconData: YaruIcons.input_mouse,
+        builder: MouseAndTouchpadPage.create,
+        searchMatches: MouseAndTouchpadPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: KeyboardPage.createTitle,
+        iconData: YaruIcons.input_keyboard,
+        builder: KeyboardPage.create,
+        searchMatches: KeyboardPage.searchMatches,
+      ),
+      YaruPageItem(
+        titleBuilder: (context) => const Text('Printers'),
+        iconData: YaruIcons.printer,
+        builder: (_) => const Center(child: Text('Printers')),
+      ),
+      const YaruPageItem(
+        titleBuilder: RemovableMediaPage.createTitle,
+        iconData: YaruIcons.media_removable,
+        builder: RemovableMediaPage.create,
+        searchMatches: RemovableMediaPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: ColorPage.createTitle,
+        iconData: YaruIcons.colors,
+        builder: ColorPage.create,
+        searchMatches: ColorPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: RegionAndLanguagePage.createTitle,
+        iconData: YaruIcons.localization,
+        builder: RegionAndLanguagePage.create,
+        searchMatches: RegionAndLanguagePage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: AccessibilityPage.createTitle,
+        iconData: YaruIcons.accessibility,
+        builder: AccessibilityPage.create,
+        searchMatches: AccessibilityPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: UsersPage.createTitle,
+        iconData: YaruIcons.users,
+        builder: UsersPage.create,
+        searchMatches: UsersPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: DefaultAppsPage.createTitle,
+        iconData: YaruIcons.star,
+        builder: DefaultAppsPage.create,
+        searchMatches: DefaultAppsPage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: DateTimePage.createTitle,
+        iconData: YaruIcons.clock,
+        builder: DateTimePage.create,
+        searchMatches: DateTimePage.searchMatches,
+      ),
+      const YaruPageItem(
+        titleBuilder: InfoPage.createTitle,
+        iconData: YaruIcons.information,
+        builder: InfoPage.create,
+        searchMatches: InfoPage.searchMatches,
+      ),
+    ];

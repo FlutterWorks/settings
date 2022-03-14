@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:settings/constants.dart';
+import 'package:settings/l10n/l10n.dart';
 import 'package:settings/view/pages/accessibility/accessibility_model.dart';
-import 'package:settings/view/widgets/settings_row.dart';
-import 'package:settings/view/widgets/settings_section.dart';
-import 'package:settings/view/widgets/slider_settings_row.dart';
-import 'package:settings/view/widgets/slider_settings_secondary.dart';
-import 'package:settings/view/widgets/switch_settings_row.dart';
-import 'package:yaru_icons/widgets/yaru_icons.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
+
+import 'package:yaru_icons/yaru_icons.dart';
 
 class PointingAndClickingSection extends StatelessWidget {
   const PointingAndClickingSection({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AccessibilityModel>(context);
-    return SettingsSection(
-      headline: 'Pointing & Clicking',
+    final model = context.watch<AccessibilityModel>();
+    return YaruSection(
+      width: kDefaultWidth,
+      headline: context.l10n.pointingAndClicking,
       children: [
-        SwitchSettingsRow(
-          trailingWidget: const Text('Mouse Keys'),
+        YaruSwitchRow(
+          trailingWidget: Text(context.l10n.mouseKeys),
           value: model.mouseKeys,
           onChanged: (value) => model.setMouseKeys(value),
         ),
-        SwitchSettingsRow(
-          trailingWidget: const Text('Locate Pointer'),
+        YaruSwitchRow(
+          trailingWidget: Text(context.l10n.locatePointer),
           value: model.locatePointer,
           onChanged: (value) => model.setLocatePointer(value),
         ),
         const _ClickAssist(),
-        SliderSettingsRow(
-          actionLabel: 'Double-Click Delay',
+        YaruSliderRow(
+          actionLabel: context.l10n.doubleClickDelay,
           value: model.doubleClickDelay,
           min: 100,
           max: 1000,
@@ -46,9 +46,10 @@ class _ClickAssist extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AccessibilityModel>(context);
-    return SettingsRow(
-      trailingWidget: const Text('Click Assist'),
+    final model = context.watch<AccessibilityModel>();
+    return YaruRow(
+      enabled: model.clickAssistAvailable,
+      trailingWidget: Text(context.l10n.clickAssist),
       actionWidget: Row(
         children: [
           Text(model.clickAssistString),
@@ -79,59 +80,67 @@ class _ClickAssistSettings extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = Provider.of<AccessibilityModel>(context);
-    return SimpleDialog(
-      title: const Center(child: Text('Click Assist')),
-      contentPadding: const EdgeInsets.all(8.0),
+    final model = context.watch<AccessibilityModel>();
+    return YaruSimpleDialog(
+      width: kDefaultWidth,
+      title: context.l10n.clickAssist,
+      closeIconData: YaruIcons.window_close,
       children: [
-        SwitchSettingsRow(
-          trailingWidget: const Text('Simulated Secondary Click'),
+        YaruSwitchRow(
+          trailingWidget: Text(context.l10n.simulatedSecondaryClick),
           actionDescription:
-              'Trigger a secondary click by holding down the primary button.',
+              context.l10n.simulatedSecondaryClickDescription,
           value: model.simulatedSecondaryClick,
           onChanged: (value) => model.setSimulatedSecondaryClick(value),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SliderSettingsSecondary(
-            label: 'Delay',
-            enabled: model.simulatedSecondaryClick,
+          padding: const EdgeInsets.only(left: 16.0),
+          child: YaruSliderRow(
+            enabled: model.simulatedSecondaryClick ?? false,
+            actionLabel: context.l10n.delay,
             value: model.secondaryClickTime,
             min: 0.5,
             max: 3.0,
             defaultValue: 1.2,
             fractionDigits: 1,
-            onChanged: (value) => model.setSecondaryClickTime(value),
+            onChanged: model.setSecondaryClickTime,
           ),
         ),
-        SwitchSettingsRow(
-          trailingWidget: const Text('Hover Click'),
-          actionDescription: 'Trigger a click when the pointer hovers',
+        YaruSwitchRow(
+          trailingWidget: Text(context.l10n.hoverClick),
+          actionDescription: context.l10n.hoverClickDescription,
           value: model.dwellClick,
           onChanged: (value) => model.setDwellClick(value),
         ),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: const EdgeInsets.only(left: 16.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              SliderSettingsSecondary(
-                label: 'Delay',
-                enabled: model.dwellClick,
-                min: 0.2,
-                max: 3.0,
-                defaultValue: 1.2,
-                value: model.dwellTime,
-                fractionDigits: 1,
-                onChanged: (value) => model.setDwellTime(value),
+              SizedBox(
+                height: 56,
+                child: YaruSliderRow(
+                  enabled: model.dwellClick ?? false,
+                  actionLabel: context.l10n.delay,
+                  value: model.dwellTime,
+                  min: 0.2,
+                  max: 3.0,
+                  defaultValue: 1.2,
+                  fractionDigits: 1,
+                  onChanged: model.setDwellTime,
+                ),
               ),
-              SliderSettingsSecondary(
-                label: 'Motion thresshold',
-                enabled: model.dwellClick,
-                min: 0.0,
-                max: 30.0,
-                defaultValue: 10,
-                value: model.dwellThreshold,
-                onChanged: (value) => model.setDwellThreshold(value),
+              SizedBox(
+                height: 56,
+                child: YaruSliderRow(
+                  enabled: model.dwellClick ?? false,
+                  actionLabel: context.l10n.motionThreshold,
+                  value: model.dwellThreshold,
+                  min: 0.0,
+                  max: 30.0,
+                  defaultValue: 10,
+                  onChanged: model.setDwellThreshold,
+                ),
               ),
             ],
           ),

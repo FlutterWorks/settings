@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:settings/l10n/l10n.dart';
 
 enum AutomaticSuspend {
   off,
@@ -19,7 +20,7 @@ extension AutomaticSuspendL10n on AutomaticSuspend {
       case AutomaticSuspend.both:
         return 'On';
       default:
-        return 'Unknown';
+        return context.l10n.unknown;
     }
   }
 }
@@ -34,10 +35,13 @@ enum SleepInactiveType {
   logout,
 }
 
-extension SleepInactiveTypeInt on int {
+extension SleepInactiveTypeString on String {
   SleepInactiveType? toSleepInactiveType() {
-    if (this < 0 || this >= SleepInactiveType.values.length) return null;
-    return SleepInactiveType.values[this];
+    try {
+      return SleepInactiveType.values.byName(this);
+    } on ArgumentError {
+      return null;
+    }
   }
 }
 

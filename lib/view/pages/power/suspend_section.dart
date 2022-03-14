@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:settings/constants.dart';
 import 'package:settings/services/settings_service.dart';
 import 'package:settings/view/pages/power/suspend.dart';
 import 'package:settings/view/pages/power/suspend_model.dart';
-import 'package:settings/view/widgets/settings_row.dart';
-import 'package:settings/view/widgets/settings_section.dart';
-import 'package:settings/view/widgets/switch_settings_row.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
 
 class SuspendSection extends StatefulWidget {
   const SuspendSection({Key? key}) : super(key: key);
@@ -27,10 +26,12 @@ class _SuspendSectionState extends State<SuspendSection> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<SuspendModel>();
-    return SettingsSection(
+    return YaruSection(
+      width: kDefaultWidth,
       headline: 'Suspend & Power Button',
       children: <Widget>[
-        SettingsRow(
+        YaruRow(
+          enabled: model.powerButtonAction != null,
           trailingWidget: const Text('Power Button Behavior'),
           actionWidget: DropdownButton<PowerButtonAction?>(
             value: model.powerButtonAction,
@@ -43,7 +44,7 @@ class _SuspendSectionState extends State<SuspendSection> {
             onChanged: model.setPowerButtonAction,
           ),
         ),
-        SwitchSettingsRow(
+        YaruSwitchRow(
           trailingWidget: const Text('Show Battery Percentage'),
           value: model.showBatteryPercentage,
           onChanged: model.setShowBatteryPercentage,

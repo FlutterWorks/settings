@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:gsettings/gsettings.dart';
 import 'package:settings/schemas/schemas.dart';
 import 'package:settings/services/settings_service.dart';
 
@@ -18,6 +17,7 @@ class AccessibilityModel extends ChangeNotifier {
   static const _crossHairsClipKey = 'cross-hairs-clip';
   static const _crossHairsThicknessKey = 'cross-hairs-thickness';
   static const _crossHairsLengthKey = 'cross-hairs-length';
+  static const _crossHairsColor = 'cross-hairs-color';
   static const _inverseLightnessKey = 'invert-lightness';
   static const _brightnessRedKey = 'brightness-red';
   static const _brightnessGreenKey = 'brightness-green';
@@ -69,17 +69,41 @@ class AccessibilityModel extends ChangeNotifier {
         _interfaceSettings = service.lookup(schemaInterface),
         _peripheralsMouseSettings = service.lookup(schemaPeripheralsMouse),
         _peripheralsKeyboardSettings =
-            service.lookup(schemaPeripheralsKeyboard);
+            service.lookup(schemaPeripheralsKeyboard) {
+    _desktopA11Settings?.addListener(notifyListeners);
+    _a11yAppsSettings?.addListener(notifyListeners);
+    _a11yKeyboardSettings?.addListener(notifyListeners);
+    _a11yMagnifierSettings?.addListener(notifyListeners);
+    _a11yMouseSettings?.addListener(notifyListeners);
+    _wmPreferencesSettings?.addListener(notifyListeners);
+    _interfaceSettings?.addListener(notifyListeners);
+    _peripheralsMouseSettings?.addListener(notifyListeners);
+    _peripheralsKeyboardSettings?.addListener(notifyListeners);
+  }
 
-  final GSettings? _desktopA11Settings;
-  final GSettings? _a11yAppsSettings;
-  final GSettings? _a11yKeyboardSettings;
-  final GSettings? _a11yMagnifierSettings;
-  final GSettings? _a11yMouseSettings;
-  final GSettings? _wmPreferencesSettings;
-  final GSettings? _interfaceSettings;
-  final GSettings? _peripheralsMouseSettings;
-  final GSettings? _peripheralsKeyboardSettings;
+  @override
+  void dispose() {
+    _desktopA11Settings?.removeListener(notifyListeners);
+    _a11yAppsSettings?.removeListener(notifyListeners);
+    _a11yKeyboardSettings?.removeListener(notifyListeners);
+    _a11yMagnifierSettings?.removeListener(notifyListeners);
+    _a11yMouseSettings?.removeListener(notifyListeners);
+    _wmPreferencesSettings?.removeListener(notifyListeners);
+    _interfaceSettings?.removeListener(notifyListeners);
+    _peripheralsMouseSettings?.removeListener(notifyListeners);
+    _peripheralsKeyboardSettings?.removeListener(notifyListeners);
+    super.dispose();
+  }
+
+  final Settings? _desktopA11Settings;
+  final Settings? _a11yAppsSettings;
+  final Settings? _a11yKeyboardSettings;
+  final Settings? _a11yMagnifierSettings;
+  final Settings? _a11yMouseSettings;
+  final Settings? _wmPreferencesSettings;
+  final Settings? _interfaceSettings;
+  final Settings? _peripheralsMouseSettings;
+  final Settings? _peripheralsKeyboardSettings;
 
   // Global section
 
@@ -174,8 +198,20 @@ class AccessibilityModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  String? get screenPosition =>
+  static const screenPositions = [
+    'full-screen',
+    'top-half',
+    'bottom-half',
+    'left-half',
+    'right-half'
+  ];
+
+  String? get _realScreenPosition =>
       _a11yMagnifierSettings?.stringValue(_screenPositionKey);
+
+  String? get screenPosition => screenPositions.contains(_realScreenPosition)
+      ? _realScreenPosition
+      : null;
 
   void setScreenPosition(String value) {
     _a11yMagnifierSettings?.setValue(_screenPositionKey, value);
@@ -206,9 +242,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   bool? get crossHairsClip {
-    if (_a11yMagnifierSettings != null) {
-      return !_a11yMagnifierSettings!.boolValue(_crossHairsClipKey);
-    }
+    return _a11yMagnifierSettings?.boolValue(_crossHairsClipKey) == false;
   }
 
   void setCrossHairsClip(bool value) {
@@ -217,7 +251,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get crossHairsThickness =>
-      _a11yMagnifierSettings?.intValue(_crossHairsThicknessKey).toDouble();
+      _a11yMagnifierSettings?.intValue(_crossHairsThicknessKey)?.toDouble();
 
   void setCrossHairsThickness(double value) {
     _a11yMagnifierSettings?.setValue(_crossHairsThicknessKey, value.toInt());
@@ -225,10 +259,18 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get crossHairsLength =>
-      _a11yMagnifierSettings?.intValue(_crossHairsLengthKey).toDouble();
+      _a11yMagnifierSettings?.intValue(_crossHairsLengthKey)?.toDouble();
 
   void setCrossHairsLength(double value) {
     _a11yMagnifierSettings?.setValue(_crossHairsLengthKey, value.toInt());
+    notifyListeners();
+  }
+
+  String? get crossHairsColor =>
+      _a11yMagnifierSettings?.stringValue(_crossHairsColor);
+
+  void setCrossHairsColor(String value) {
+    _a11yMagnifierSettings?.setValue(_crossHairsColor, value);
     notifyListeners();
   }
 
@@ -315,7 +357,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get delay =>
-      _peripheralsKeyboardSettings?.intValue(_delayKeyboardKey).toDouble();
+      _peripheralsKeyboardSettings?.intValue(_delayKeyboardKey)?.toDouble();
 
   void setDelay(double value) {
     _peripheralsKeyboardSettings?.setValue(_delayKeyboardKey, value.toInt());
@@ -324,7 +366,7 @@ class AccessibilityModel extends ChangeNotifier {
 
   double? get interval => _peripheralsKeyboardSettings
       ?.intValue(_repeatIntervalKeyboardKey)
-      .toDouble();
+      ?.toDouble();
 
   void setInterval(double value) {
     _peripheralsKeyboardSettings?.setValue(
@@ -340,12 +382,15 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get cursorBlinkTime =>
-      _interfaceSettings?.intValue(_cursorBlinkTimeKey).toDouble();
+      _interfaceSettings?.intValue(_cursorBlinkTimeKey)?.toDouble();
 
   void setCursorBlinkTime(double value) {
     _interfaceSettings?.setValue(_cursorBlinkTimeKey, value.toInt());
     notifyListeners();
   }
+
+  bool get typingAssistAvailable =>
+      stickyKeys != null || slowKeys != null || bounceKeys != null;
 
   bool get _typingAssist =>
       (stickyKeys ?? false) || (slowKeys ?? false) || (bounceKeys ?? false);
@@ -391,7 +436,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get slowKeysDelay =>
-      _a11yKeyboardSettings?.intValue(_slowKeysDelayKey).toDouble();
+      _a11yKeyboardSettings?.intValue(_slowKeysDelayKey)?.toDouble();
 
   void setSlowKeysDelay(double value) {
     _a11yKeyboardSettings?.setValue(_slowKeysDelayKey, value.toInt());
@@ -430,7 +475,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get bounceKeysDelay =>
-      _a11yKeyboardSettings?.intValue(_bounceKeysDelayKey).toDouble();
+      _a11yKeyboardSettings?.intValue(_bounceKeysDelayKey)?.toDouble();
 
   void setBounceKeysDelay(double value) {
     _a11yKeyboardSettings?.setValue(_bounceKeysDelayKey, value.toInt());
@@ -461,17 +506,20 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get doubleClickDelay =>
-      _peripheralsMouseSettings?.intValue(_doubleClickDelayKey).toDouble();
+      _peripheralsMouseSettings?.intValue(_doubleClickDelayKey)?.toDouble();
 
   void setDoubleClickDelay(double value) {
     _peripheralsMouseSettings?.setValue(_doubleClickDelayKey, value.toInt());
     notifyListeners();
   }
 
-  bool get clickAssist =>
+  bool get clickAssistAvailable =>
+      simulatedSecondaryClick != null || dwellClick != null;
+
+  bool get _clickAssist =>
       (simulatedSecondaryClick ?? false) || (dwellClick ?? false);
 
-  String get clickAssistString => clickAssist ? 'On' : 'Off';
+  String get clickAssistString => _clickAssist ? 'On' : 'Off';
 
   bool? get simulatedSecondaryClick =>
       _a11yMouseSettings?.boolValue(_secondaryClickEnabledKey);
@@ -504,7 +552,7 @@ class AccessibilityModel extends ChangeNotifier {
   }
 
   double? get dwellThreshold =>
-      _a11yMouseSettings?.intValue(_dwellThresholdKey).toDouble();
+      _a11yMouseSettings?.intValue(_dwellThresholdKey)?.toDouble();
 
   void setDwellThreshold(double value) {
     _a11yMouseSettings?.setValue(_dwellThresholdKey, value.toInt());

@@ -6,13 +6,12 @@ const String schemaA11yMouse = 'org.gnome.desktop.a11y.mouse';
 const String schemaInterface = 'org.gnome.desktop.interface';
 const String schemaPeripheralsKeyboard =
     'org.gnome.desktop.peripherals.keyboard';
+const String schemaInputSources = 'org.gnome.desktop.input-sources';
 const String schemaWmPreferences = 'org.gnome.desktop.wm.preferences';
 const schemaWmKeybindings = 'org.gnome.desktop.wm.keybindings';
 const schemaGnomeShellKeybinding = 'org.gnome.shell.keybindings';
-const String schemaPeripheralsMouse =
-    'org.gnome.settings-daemon.peripherals.mouse';
-const String schemaDesktopPeripheralsMouse =
-    'org.gnome.desktop.peripherals.mouse';
+const schemaGnomeShellAppSwitcher = 'org.gnome.shell.app-switcher';
+const String schemaPeripheralsMouse = 'org.gnome.desktop.peripherals.mouse';
 const String schemaPeripheralTouchpad =
     'org.gnome.desktop.peripherals.touchpad';
 const String schemaSound = 'org.gnome.desktop.sound';
@@ -20,3 +19,12 @@ const String schemaDashToDock = 'org.gnome.shell.extensions.dash-to-dock';
 const String schemaNotifications = 'org.gnome.desktop.notifications';
 const String schemaMediaHandling = 'org.gnome.desktop.media-handling';
 const String schemaBackground = 'org.gnome.desktop.background';
+const String schemaMutter = 'org.gnome.mutter';
+const schemaSettingsDaemonPowerPlugin =
+    'org.gnome.settings-daemon.plugins.power';
+const schemaPrivacy = 'org.gnome.desktop.privacy';
+const schemaLocation = 'org.gnome.system.location';
+const schemaScreenSaver = 'org.gnome.desktop.screensaver';
+const schemaSession = 'org.gnome.desktop.session';
+const schemaDateTime = 'org.gnome.desktop.datetime';
+const schemaCalendar = 'org.gnome.desktop.calendar';

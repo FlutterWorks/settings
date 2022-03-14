@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:settings/constants.dart';
 import 'package:settings/view/pages/power/battery_model.dart';
 import 'package:settings/view/pages/power/battery_widgets.dart';
-import 'package:settings/view/widgets/settings_section.dart';
 import 'package:upower/upower.dart';
-import 'package:yaru/yaru.dart' as yaru;
+import 'package:yaru/yaru.dart';
+import 'package:yaru_widgets/yaru_widgets.dart';
 
 class BatterySection extends StatefulWidget {
   const BatterySection({Key? key}) : super(key: key);
@@ -32,18 +33,19 @@ class _BatterySectionState extends State<BatterySection> {
   @override
   Widget build(BuildContext context) {
     final model = context.watch<BatteryModel>();
-    return SettingsSection(
+    return YaruSection(
+      width: kDefaultWidth,
       headline: 'Battery',
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: LinearProgressIndicator(
+          child: YaruLinearProgressIndicator(
               value: model.percentage / 100.0,
               color: model.percentage > 80.0
-                  ? yaru.Colors.green
+                  ? YaruColors.green
                   : model.percentage < 30.0
-                      ? Colors.red
-                      : Colors.amber),
+                      ? YaruColors.red
+                      : YaruColors.yellow),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
