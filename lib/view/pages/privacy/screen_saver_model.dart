@@ -55,10 +55,12 @@ class ScreenSaverModel extends SafeChangeNotifier {
     notifyListeners();
   }
 
-  int? get lockDelay => _screenSaverSettings?.intValue(_lockDelayKey);
+  int? get _realLockDelay => _screenSaverSettings?.intValue(_lockDelayKey);
+  int? get lockDelay =>
+      ScreenLockDelay.values.contains(_realLockDelay) ? _realLockDelay : null;
   set lockDelay(int? value) {
     if (value == null) return;
-    _screenSaverSettings?.setValue(_lockDelayKey, value);
+    _screenSaverSettings?.setUint32Value(_lockDelayKey, value);
     notifyListeners();
   }
 
@@ -68,7 +70,7 @@ class ScreenSaverModel extends SafeChangeNotifier {
       IdleDelay.values.contains(_realIdleDelay) ? _realIdleDelay : null;
   void setIdleDelay(int? value) {
     if (value == null) return;
-    _sessionSettings?.setValue(_idleDelayKey, value);
+    _sessionSettings?.setUint32Value(_idleDelayKey, value);
     notifyListeners();
   }
 }

@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:settings/constants.dart';
 import 'package:settings/l10n/l10n.dart';
 import 'package:settings/services/settings_service.dart';
+import 'package:settings/view/duration_dropdown_button.dart';
 import 'package:settings/view/pages/power/power_settings.dart';
-import 'package:settings/view/pages/power/power_settings_widgets.dart';
 import 'package:settings/view/pages/privacy/screen_saver_model.dart';
 import 'package:settings/view/section_description.dart';
 import 'package:yaru_widgets/yaru_widgets.dart';
@@ -43,15 +43,17 @@ class ScreenSaverPage extends StatelessWidget {
               trailingWidget: Text(context.l10n.screenSaverAutoScreenLockLabel),
               value: model.lockEnabled,
               onChanged: (v) => model.lockEnabled = v),
-          YaruSliderRow(
-              enabled: model.lockDelay != null,
-              width: kDefaultWidth,
-              actionLabel: context.l10n.screenSaverTimerLabel,
-              actionDescription: context.l10n.screenSaverTimerDescription,
-              value: model.lockDelay?.toDouble(),
-              min: 0,
-              max: 3600,
-              onChanged: (v) => model.lockDelay = v.toInt()),
+          YaruRow(
+            width: kDefaultWidth,
+            enabled: model.lockDelay != null,
+            trailingWidget: Text(context.l10n.screenSaverAutoDelayLabel),
+            description: context.l10n.screenSaverAutoDelayDescription,
+            actionWidget: DurationDropdownButton(
+              value: model.lockDelay,
+              values: ScreenLockDelay.values,
+              onChanged: (v) => model.lockDelay = v!.toInt(),
+            ),
+          ),
           YaruSwitchRow(
               enabled: model.ubuntuLockOnSuspend != null,
               width: kDefaultWidth,
