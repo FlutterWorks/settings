@@ -5,18 +5,17 @@ import 'package:settings/services/settings_service.dart';
 import 'package:settings/view/pages/notifications/app_notifications_section.dart';
 import 'package:settings/view/pages/notifications/global_notifications_section.dart';
 import 'package:settings/view/pages/notifications/notifications_model.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:settings/view/pages/settings_page.dart';
+import 'package:ubuntu_service/ubuntu_service.dart';
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({Key? key}) : super(key: key);
+  const NotificationsPage({super.key});
 
-  static Widget create(BuildContext context) {
-    final service = Provider.of<SettingsService>(context, listen: false);
-    return ChangeNotifierProvider<NotificationsModel>(
-      create: (_) => NotificationsModel(service),
-      child: const NotificationsPage(),
-    );
-  }
+  static Widget create(BuildContext context) =>
+      ChangeNotifierProvider<NotificationsModel>(
+        create: (_) => NotificationsModel(getService<SettingsService>()),
+        child: const NotificationsPage(),
+      );
 
   static Widget createTitle(BuildContext context) =>
       Text(context.l10n.notificationsPageTitle);
@@ -30,7 +29,7 @@ class NotificationsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const YaruPage(
+    return const SettingsPage(
       children: [
         GlobalNotificationsSection(),
         AppNotificationsSection(),

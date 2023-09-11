@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockingjay/mockingjay.dart';
 import 'package:provider/provider.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 
 typedef WidgetBuilderNoContext = Widget Function();
 
@@ -13,14 +14,14 @@ extension TesterExtension on WidgetTester {
   /// Navigator.of(context).pushNamed('/path', arguments: args);
   /// ```
 
-  Future<void> pumpScreen<R, P extends ChangeNotifier>({
+  Future<void> pumpScreen<R, P extends SafeChangeNotifier>({
     required WidgetBuilderNoContext widgetBuilder,
     required R repository,
     P? provider,
     dynamic args,
     MockNavigator? navigator,
   }) async {
-    Widget toTest = widgetBuilder.call();
+    var toTest = widgetBuilder.call();
     if (args != null) {
       toTest = Navigator(
         onGenerateRoute: (_) {
@@ -34,8 +35,8 @@ extension TesterExtension on WidgetTester {
 
     Widget parent = MaterialApp(
       home: MockNavigatorProvider(
-        child: toTest,
         navigator: navigator ?? MockNavigator(),
+        child: toTest,
       ),
     );
 

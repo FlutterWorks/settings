@@ -69,7 +69,7 @@ class Settings {
   }
 
   Future<void> setValue<T>(String key, T value) async {
-    if (_values[key] == key) {
+    if (_values[key] == value) {
       return;
     }
     _values[key] = value;
@@ -96,7 +96,7 @@ class Settings {
       return;
     }
     _values[key] = value;
-    _settings.set(key, DBusUint32(value));
+    await _settings.set(key, DBusUint32(value));
   }
 
   Future<void> resetValue(String key) {

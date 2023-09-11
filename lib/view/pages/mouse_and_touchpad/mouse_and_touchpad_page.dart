@@ -6,15 +6,15 @@ import 'package:settings/view/pages/mouse_and_touchpad/general_section.dart';
 import 'package:settings/view/pages/mouse_and_touchpad/mouse_and_touchpad_model.dart';
 import 'package:settings/view/pages/mouse_and_touchpad/mouse_section.dart';
 import 'package:settings/view/pages/mouse_and_touchpad/touchpad_section.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:settings/view/pages/settings_page.dart';
+import 'package:ubuntu_service/ubuntu_service.dart';
 
 class MouseAndTouchpadPage extends StatelessWidget {
-  const MouseAndTouchpadPage({Key? key}) : super(key: key);
+  const MouseAndTouchpadPage({super.key});
 
   static Widget create(BuildContext context) {
-    final service = Provider.of<SettingsService>(context, listen: false);
     return ChangeNotifierProvider<MouseAndTouchpadModel>(
-      create: (_) => MouseAndTouchpadModel(service),
+      create: (_) => MouseAndTouchpadModel(getService<SettingsService>()),
       child: const MouseAndTouchpadPage(),
     );
   }
@@ -31,7 +31,7 @@ class MouseAndTouchpadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const YaruPage(
+    return const SettingsPage(
       children: [
         GeneralSection(),
         MouseSection(),

@@ -1,8 +1,15 @@
-import 'package:flutter/foundation.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:settings/schemas/schemas.dart';
 import 'package:settings/services/settings_service.dart';
 
-class MouseAndTouchpadModel extends ChangeNotifier {
+class MouseAndTouchpadModel extends SafeChangeNotifier {
+  MouseAndTouchpadModel(SettingsService service)
+      : _peripheralsMouseSettings = service.lookup(schemaPeripheralsMouse),
+        _peripheralsTouchpadSettings =
+            service.lookup(schemaPeripheralTouchpad) {
+    _peripheralsMouseSettings?.addListener(notifyListeners);
+    _peripheralsTouchpadSettings?.addListener(notifyListeners);
+  }
   static const _leftHanded = 'left-handed';
   static const _mouseSpeedKey = 'speed';
   static const _mouseNaturalScrollKey = 'natural-scroll';
@@ -12,14 +19,6 @@ class MouseAndTouchpadModel extends ChangeNotifier {
   static const _touchpadDisableWhileTyping = 'disable-while-typing';
   static const _touchpadTwoFingerScrolling = 'two-finger-scrolling-enabled';
   static const _touchpadEdgeScrolling = 'edge-scrolling-enabled';
-
-  MouseAndTouchpadModel(SettingsService service)
-      : _peripheralsMouseSettings = service.lookup(schemaPeripheralsMouse),
-        _peripheralsTouchpadSettings =
-            service.lookup(schemaPeripheralTouchpad) {
-    _peripheralsMouseSettings?.addListener(notifyListeners);
-    _peripheralsTouchpadSettings?.addListener(notifyListeners);
-  }
 
   @override
   void dispose() {

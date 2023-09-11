@@ -3,26 +3,36 @@ import 'package:provider/provider.dart';
 import 'package:settings/constants.dart';
 import 'package:settings/l10n/l10n.dart';
 import 'package:settings/services/display/display_service.dart';
+import 'package:settings/view/common/title_bar_tab.dart';
 import 'package:settings/view/pages/displays/displays_configuration.dart';
 import 'package:settings/view/pages/displays/displays_model.dart';
+import 'package:settings/view/pages/displays/nightlight_page.dart';
 import 'package:settings/view/pages/displays/widgets/monitor_section.dart';
+import 'package:settings/view/pages/settings_page.dart';
+import 'package:ubuntu_service/ubuntu_service.dart';
 import 'package:yaru_icons/yaru_icons.dart';
 import 'package:yaru_widgets/yaru_widgets.dart';
 
 class DisplaysPage extends StatefulWidget {
   /// private as we have to pass from create method below
-  const DisplaysPage._({Key? key}) : super(key: key);
+  const DisplaysPage._();
 
   static Widget createTitle(BuildContext context) =>
       Text(context.l10n.displaysPageTitle);
 
   static Widget create(BuildContext context) {
-    final service = Provider.of<DisplayService>(context, listen: false);
     return ChangeNotifierProvider(
-      create: (_) => DisplaysModel(service),
+      create: (_) => DisplaysModel(getService<DisplayService>()),
       child: const DisplaysPage._(),
     );
   }
+
+  static bool searchMatches(String value, BuildContext context) =>
+      value.isNotEmpty
+          ? context.l10n.displaysPageTitle
+              .toLowerCase()
+              .contains(value.toLowerCase())
+          : false;
 
   @override
   State<DisplaysPage> createState() => _DisplaysPageState();
@@ -34,20 +44,43 @@ class _DisplaysPageState extends State<DisplaysPage> {
     final model = context.watch<DisplaysModel>();
 
     return ValueListenableBuilder<DisplaysConfiguration?>(
-        valueListenable: model.configuration,
-        builder:
-            (BuildContext context, DisplaysConfiguration? configurations, _) {
-          return YaruTabbedPage(
-            width: kDefaultWidth,
-            tabIcons:
-                DisplaysPageSection.values.map((e) => e.icon(context)).toList(),
-            tabTitles:
-                DisplaysPageSection.values.map((e) => e.name(context)).toList(),
-            views: DisplaysPageSection.values
-                .map((e) => _buildPage(e, model, configurations))
-                .toList(),
-          );
-        });
+      valueListenable: model.configuration,
+      builder: (context, configurations, _) {
+        return DefaultTabController(
+          length: DisplaysPageSection.values.length,
+          child: Scaffold(
+            appBar: YaruWindowTitleBar(
+              titleSpacing: 0,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              border: BorderSide.none,
+              title: SizedBox(
+                width: 300,
+                child: TabBar(
+                  tabs: DisplaysPageSection.values
+                      .map(
+                        (e) => TitleBarTab(
+                          text: e.name(context),
+                          iconData: e.icon(context),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ),
+            body: TabBarView(
+              children: DisplaysPageSection.values
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(top: kYaruPagePadding),
+                      child: _buildPage(e, model, configurations),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildPage(
@@ -57,33 +90,8 @@ class _DisplaysPageState extends State<DisplaysPage> {
   ) {
     switch (section) {
       case DisplaysPageSection.displays:
-        return YaruPage(
+        return SettingsPage(
           children: [
-            SizedBox(
-              width: kDefaultWidth,
-              child: Visibility(
-                visible: model.modifyMode,
-                maintainSize: true,
-                maintainAnimation: true,
-                maintainState: true,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: <Widget>[
-                        ElevatedButton(
-                          onPressed: model.apply,
-                          child: Text(context.l10n.apply),
-                        ),
-                      ],
-                    ),
-                    const Divider(
-                      color: Colors.transparent,
-                    ),
-                  ],
-                ),
-              ),
-            ),
             SizedBox(
               width: kDefaultWidth,
               child: ListView.builder(
@@ -97,11 +105,9 @@ class _DisplaysPageState extends State<DisplaysPage> {
           ],
         );
       case DisplaysPageSection.night:
-        return YaruPage(
+        return SettingsPage(
           children: [
-            Center(
-              child: Text(context.l10n.nightMode),
-            )
+            NightlightPage.create(context),
           ],
         );
       default:
@@ -130,9 +136,9 @@ extension DisplaysPageSectionExtension on DisplaysPageSection {
   IconData icon(BuildContext context) {
     switch (this) {
       case DisplaysPageSection.displays:
-        return YaruIcons.desktop_display;
+        return YaruIcons.display_layout;
       case DisplaysPageSection.night:
-        return YaruIcons.weather_clear_night;
+        return YaruIcons.clear_night;
       default:
         return Icons.check_box_outline_blank;
     }

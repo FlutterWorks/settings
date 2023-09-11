@@ -1,16 +1,15 @@
-import 'package:flutter/foundation.dart';
+import 'package:safe_change_notifier/safe_change_notifier.dart';
 import 'package:settings/schemas/schemas.dart';
 import 'package:settings/services/settings_service.dart';
 
-class SoundModel extends ChangeNotifier {
-  static const _allowAbove100Key = 'allow-volume-above-100-percent';
-  static const _eventSoundsKey = 'event-sounds';
-  static const _inputFeedbackSounds = 'input-feedback-sounds';
-
+class SoundModel extends SafeChangeNotifier {
   SoundModel(SettingsService service)
       : _soundSettings = service.lookup(schemaSound) {
     _soundSettings?.addListener(notifyListeners);
   }
+  static const _allowAbove100Key = 'allow-volume-above-100-percent';
+  static const _eventSoundsKey = 'event-sounds';
+  static const _inputFeedbackSounds = 'input-feedback-sounds';
 
   @override
   void dispose() {
