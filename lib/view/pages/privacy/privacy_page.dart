@@ -7,10 +7,9 @@ import 'package:settings/view/pages/privacy/location_page.dart';
 import 'package:settings/view/pages/privacy/reporting_page.dart';
 import 'package:settings/view/pages/privacy/screen_saver_page.dart';
 import 'package:settings/view/pages/settings_page.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
-class PrivacyPage extends StatelessWidget {
+class PrivacyPage extends StatefulWidget {
   const PrivacyPage({super.key});
 
   static Widget create(BuildContext context) => const PrivacyPage();
@@ -29,6 +28,26 @@ class PrivacyPage extends StatelessWidget {
           : false;
 
   @override
+  State<PrivacyPage> createState() => _PrivacyPageState();
+}
+
+class _PrivacyPageState extends State<PrivacyPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 6, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final content = <Widget, (IconData, String)>{
       ConnectivityPage.create(context): (
@@ -44,7 +63,7 @@ class PrivacyPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.all(8.0),
             child: Text('Thunderbolt - Please implement 🥲️'),
-          )
+          ),
         ],
       ): (YaruIcons.thunderbolt, context.l10n.thunderBoltPageTitle),
       HouseKeepingPage.create(context): (
@@ -61,30 +80,51 @@ class PrivacyPage extends StatelessWidget {
       ),
     };
 
-    return DefaultTabController(
-      length: content.length,
-      child: Scaffold(
-        appBar: YaruWindowTitleBar(
-          titleSpacing: 0,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          border: BorderSide.none,
-          title: TabBar(
-            isScrollable: true,
-            tabs: content.entries
-                .map((e) => TitleBarTab(text: e.value.$2, iconData: e.value.$1))
-                .toList(),
-          ),
-        ),
-        body: TabBarView(
-          children: content.entries
-              .map(
-                (e) => Padding(
-                  padding: const EdgeInsets.only(top: kYaruPagePadding),
-                  child: e.key,
+    return Scaffold(
+      appBar: YaruWindowTitleBar(
+        titleSpacing: 0,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        border: BorderSide.none,
+        title: Text(context.l10n.privacyPageTitle),
+      ),
+      body: Column(
+        children: [
+          Material(
+            child: SizedBox(
+              width: 550,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: SizedBox(
+                  width: 1000,
+                  child: YaruTabBar(
+                    tabController: _controller,
+                    tabs: content.entries
+                        .map(
+                          (e) => TitleBarTab(
+                            text: e.value.$2,
+                            iconData: e.value.$1,
+                          ),
+                        )
+                        .toList(),
+                  ),
                 ),
-              )
-              .toList(),
-        ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: TabBarView(
+              controller: _controller,
+              children: content.entries
+                  .map(
+                    (e) => Padding(
+                      padding: const EdgeInsets.only(top: kYaruPagePadding),
+                      child: e.key,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
       ),
     );
   }

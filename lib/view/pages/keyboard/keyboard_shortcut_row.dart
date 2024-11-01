@@ -1,8 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:settings/view/pages/keyboard/keyboard_shortcuts_model.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class KeyboardShortcutRow extends StatefulWidget {
   const KeyboardShortcutRow({
@@ -33,7 +35,7 @@ class _KeyboardShortcutRowState extends State<KeyboardShortcutRow> {
       onTap: () async {
         final oldShortcut = model.getShortcutStrings(widget.shortcutId);
         await model.grabKeyboard().then((value) {
-          if (!value) return;
+          if (!value || !context.mounted) return;
           showDialog<List<String>>(
             context: context,
             builder: (_) => StatefulBuilder(
@@ -66,7 +68,7 @@ class _KeyboardShortcutRowState extends State<KeyboardShortcutRow> {
         title: Text(widget.label),
         trailing: Row(
           children: [
-            for (var string in shortcut)
+            for (final string in shortcut)
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(4.0),
@@ -80,7 +82,7 @@ class _KeyboardShortcutRowState extends State<KeyboardShortcutRow> {
                     ),
                   ),
                 ),
-              )
+              ),
           ],
         ),
       ),
@@ -141,7 +143,7 @@ class KeyboardShortcutDialog extends StatelessWidget {
         ElevatedButton(
           child: const Text('Confirm'),
           onPressed: () => Navigator.of(context).pop([processKeys(keys)]),
-        )
+        ),
       ],
     );
   }

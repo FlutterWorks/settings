@@ -4,8 +4,7 @@ import 'package:settings/constants.dart';
 import 'package:settings/view/common/settings_section.dart';
 import 'package:settings/view/pages/keyboard/input_source_model.dart';
 import 'package:settings/view/pages/settings_simple_dialog.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class InputSourceSelectionSection extends StatelessWidget {
   const InputSourceSelectionSection({
@@ -96,7 +95,7 @@ class _InputTypeRow extends StatelessWidget {
           YaruOptionButton(
             onPressed: () => model.removeInputSource(inputType),
             child: const Icon(YaruIcons.trash),
-          )
+          ),
         ],
       ),
       title: Text(
@@ -155,7 +154,7 @@ class _AddKeymapDialogState extends State<_AddKeymapDialog> {
                 '${model.inputSources[tabbedIndex].name ?? ''}: ${model.inputSources[tabbedIndex].description ?? ''}',
             closeIconData: YaruIcons.window_close,
             children: [
-              for (var variant in model.inputSources[tabbedIndex].variants)
+              for (final variant in model.inputSources[tabbedIndex].variants)
                 InkWell(
                   onTap: () {
                     if (model.inputSources[tabbedIndex].name != null &&
@@ -183,7 +182,7 @@ class _AddKeymapDialogState extends State<_AddKeymapDialog> {
                   variantsLoad = false;
                 }),
                 child: const Icon(YaruIcons.pan_start),
-              )
+              ),
             ],
           );
   }

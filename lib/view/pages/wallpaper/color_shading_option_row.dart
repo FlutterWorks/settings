@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:settings/l10n/l10n.dart';
 import 'package:settings/utils.dart';
 import 'package:settings/view/pages/wallpaper/wallpaper_model.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class ColorShadingOptionRow extends StatelessWidget {
   const ColorShadingOptionRow({
@@ -42,7 +42,7 @@ class ColorShadingOptionRow extends StatelessWidget {
                       value: type,
                       onTap: () => model.colorShadingType = type,
                       child: Text(type.localize(context.l10n)),
-                    )
+                    ),
                 ];
               },
             ),
@@ -82,7 +82,7 @@ class ColorShadingOptionRow extends StatelessWidget {
         if (primary)
           {model.primaryColor = '#${color.hex}'}
         else
-          {model.secondaryColor = '#${color.hex}'}
+          {model.secondaryColor = '#${color.hex}'},
       },
       width: 40,
       height: 40,

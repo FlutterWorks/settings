@@ -1,14 +1,14 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localized_locales/flutter_localized_locales.dart';
 import 'package:provider/provider.dart';
 import 'package:settings/app_model.dart';
 import 'package:settings/l10n/l10n.dart';
 import 'package:settings/schemas/schemas.dart';
-import 'package:settings/services/settings_service.dart';
 import 'package:settings/view/app_theme.dart';
 import 'package:settings/view/pages/page_items.dart';
 import 'package:yaru/yaru.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
 
 class UbuntuSettingsApp extends StatelessWidget {
   const UbuntuSettingsApp({
@@ -18,7 +18,7 @@ class UbuntuSettingsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AppTheme(Settings(schemaInterface)),
+      create: (_) => AppTheme(GnomeSettings(schemaInterface)),
       child: YaruTheme(
         builder: (context, yaru, child) {
           return MaterialApp(
@@ -30,6 +30,15 @@ class UbuntuSettingsApp extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             localizationsDelegates: AppLocalizations.localizationsDelegates +
                 [const LocaleNamesLocalizationsDelegate()],
+            scrollBehavior: const MaterialScrollBehavior().copyWith(
+              dragDevices: {
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.touch,
+                PointerDeviceKind.stylus,
+                PointerDeviceKind.unknown,
+                PointerDeviceKind.trackpad,
+              },
+            ),
           );
         },
       ),
@@ -66,9 +75,7 @@ class App extends StatelessWidget {
         : getPageItems(context);
 
     return YaruMasterDetailPage(
-      layoutDelegate: const YaruMasterFixedPaneDelegate(
-        paneWidth: 270,
-      ),
+      paneLayoutDelegate: const YaruFixedPaneDelegate(paneSize: 270),
       length: items.length,
       tileBuilder: (context, index, selected, availableWidth) => IconTheme(
         data: Theme.of(context).iconTheme.copyWith(size: 21),

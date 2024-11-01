@@ -9,9 +9,8 @@ import 'package:settings/view/pages/displays/displays_model.dart';
 import 'package:settings/view/pages/displays/nightlight_page.dart';
 import 'package:settings/view/pages/displays/widgets/monitor_section.dart';
 import 'package:settings/view/pages/settings_page.dart';
-import 'package:ubuntu_service/ubuntu_service.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 class DisplaysPage extends StatefulWidget {
   /// private as we have to pass from create method below
@@ -22,7 +21,7 @@ class DisplaysPage extends StatefulWidget {
 
   static Widget create(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => DisplaysModel(getService<DisplayService>()),
+      create: (_) => DisplaysModel(di<DisplayService>()),
       child: const DisplaysPage._(),
     );
   }
@@ -38,7 +37,23 @@ class DisplaysPage extends StatefulWidget {
   State<DisplaysPage> createState() => _DisplaysPageState();
 }
 
-class _DisplaysPageState extends State<DisplaysPage> {
+class _DisplaysPageState extends State<DisplaysPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        TabController(length: DisplaysPageSection.values.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final model = context.watch<DisplaysModel>();
@@ -46,16 +61,19 @@ class _DisplaysPageState extends State<DisplaysPage> {
     return ValueListenableBuilder<DisplaysConfiguration?>(
       valueListenable: model.configuration,
       builder: (context, configurations, _) {
-        return DefaultTabController(
-          length: DisplaysPageSection.values.length,
-          child: Scaffold(
-            appBar: YaruWindowTitleBar(
-              titleSpacing: 0,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              border: BorderSide.none,
-              title: SizedBox(
+        return Scaffold(
+          appBar: YaruWindowTitleBar(
+            titleSpacing: 0,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            border: BorderSide.none,
+            title: Text(context.l10n.displaysPageTitle),
+          ),
+          body: Column(
+            children: [
+              SizedBox(
                 width: 300,
-                child: TabBar(
+                child: YaruTabBar(
+                  tabController: _controller,
                   tabs: DisplaysPageSection.values
                       .map(
                         (e) => TitleBarTab(
@@ -66,17 +84,20 @@ class _DisplaysPageState extends State<DisplaysPage> {
                       .toList(),
                 ),
               ),
-            ),
-            body: TabBarView(
-              children: DisplaysPageSection.values
-                  .map(
-                    (e) => Padding(
-                      padding: const EdgeInsets.only(top: kYaruPagePadding),
-                      child: _buildPage(e, model, configurations),
-                    ),
-                  )
-                  .toList(),
-            ),
+              Expanded(
+                child: TabBarView(
+                  controller: _controller,
+                  children: DisplaysPageSection.values
+                      .map(
+                        (e) => Padding(
+                          padding: const EdgeInsets.only(top: kYaruPagePadding),
+                          child: _buildPage(e, model, configurations),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
           ),
         );
       },

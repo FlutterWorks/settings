@@ -5,10 +5,9 @@ import 'package:settings/l10n/l10n.dart';
 import 'package:settings/view/common/settings_section.dart';
 import 'package:settings/view/pages/power/battery_model.dart';
 import 'package:settings/view/pages/power/battery_widgets.dart';
-import 'package:ubuntu_service/ubuntu_service.dart';
 import 'package:upower/upower.dart';
-import 'package:yaru_colors/yaru_colors.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 class BatterySection extends StatefulWidget {
   const BatterySection({super.key});
@@ -30,11 +29,12 @@ class _BatterySectionState extends State<BatterySection> {
     super.initState();
 
     final model = context.read<BatteryModel>();
-    model.init(getService<UPowerClient>());
+    model.init(di<UPowerClient>());
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final model = context.watch<BatteryModel>();
     return SettingsSection(
       width: kDefaultWidth,
@@ -45,10 +45,10 @@ class _BatterySectionState extends State<BatterySection> {
           child: YaruLinearProgressIndicator(
             value: model.percentage / 100.0,
             color: model.percentage > 80.0
-                ? YaruColors.success
+                ? theme.colorScheme.success
                 : model.percentage < 30.0
-                    ? YaruColors.error
-                    : YaruColors.warning,
+                    ? theme.colorScheme.error
+                    : theme.colorScheme.warning,
           ),
         ),
         Padding(

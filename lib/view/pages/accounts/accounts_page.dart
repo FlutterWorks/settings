@@ -7,17 +7,16 @@ import 'package:settings/view/pages/accounts/accounts_model.dart';
 import 'package:settings/view/pages/accounts/user_model.dart';
 import 'package:settings/view/pages/privacy/house_keeping_page.dart';
 import 'package:settings/view/pages/settings_page.dart';
-import 'package:ubuntu_service/ubuntu_service.dart';
+import 'package:watch_it/watch_it.dart';
 import 'package:xdg_accounts/xdg_accounts.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class AccountsPage extends StatelessWidget {
   const AccountsPage({super.key});
 
   static Widget create(BuildContext context) =>
       ChangeNotifierProvider<AccountsModel>(
-        create: (context) => AccountsModel(getService<XdgAccounts>())..init(),
+        create: (context) => AccountsModel(di<XdgAccounts>())..init(),
         child: const AccountsPage(),
       );
 
@@ -63,11 +62,11 @@ class AccountsPage extends StatelessWidget {
                     init: () async {
                       await Future.delayed(const Duration(seconds: 1));
                     },
-                  )
+                  ),
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -158,7 +157,7 @@ class _AddUserDialogState extends State<_AddUserDialog> {
             controller: _passwordHintController,
             obscureText: true,
             decoration: const InputDecoration(labelText: 'Password hint'),
-          )
+          ),
         ],
       ),
       actions: [
@@ -172,10 +171,14 @@ class _AddUserDialogState extends State<_AddUserDialog> {
             passwordHint: _passwordHintController.text,
           )
               .then((_) {
-            model.init().then((value) => Navigator.pop(context));
+            model.init().then((value) {
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
+            });
           }),
           child: Text(context.l10n.confirm),
-        )
+        ),
       ],
     );
   }
@@ -262,7 +265,11 @@ class _UserTile extends StatelessWidget {
                     name: model.userName!,
                     removeFiles: true,
                   ).then((_) {
-                    init().then((value) => Navigator.pop(context));
+                    init().then((value) {
+                      if (context.mounted) {
+                        Navigator.pop(context);
+                      }
+                    });
                   }),
                 ),
               ),
@@ -309,7 +316,7 @@ class _EditUserDialogState extends State<_EditUserDialog> {
         TextField(
           controller: userNameController,
           onSubmitted: (value) => model.userName = value,
-        )
+        ),
       ],
     );
   }

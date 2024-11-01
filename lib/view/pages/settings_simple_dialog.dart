@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class SettingsSimpleDialog extends StatelessWidget {
   /// Create a [SimpleDialog] with a close button
@@ -67,7 +67,7 @@ class SettingsSimpleDialog extends StatelessWidget {
         semanticLabel: semanticLabel,
         alignment: alignment,
         children: [
-          for (var child in children) SizedBox(width: width, child: child)
+          for (final child in children) SizedBox(width: width, child: child),
         ],
       ),
     );

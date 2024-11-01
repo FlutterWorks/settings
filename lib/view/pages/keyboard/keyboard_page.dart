@@ -3,8 +3,7 @@ import 'package:settings/l10n/l10n.dart';
 import 'package:settings/view/common/title_bar_tab.dart';
 import 'package:settings/view/pages/keyboard/keyboard_settings_page.dart';
 import 'package:settings/view/pages/keyboard/keyboard_shortcuts_page.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:yaru/yaru.dart';
 
 class KeyboardPage extends StatefulWidget {
   const KeyboardPage({super.key});
@@ -46,7 +45,7 @@ class _KeyboardPageState extends State<KeyboardPage>
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           title: const SizedBox(
             width: 400,
-            child: TabBar(
+            child: YaruTabBar(
               tabs: [
                 TitleBarTab(
                   text: 'Keyboard Settings',

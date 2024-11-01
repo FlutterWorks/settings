@@ -5,9 +5,8 @@ import 'package:settings/l10n/l10n.dart';
 import 'package:settings/view/common/title_bar_tab.dart';
 import 'package:settings/view/pages/connections/wifi_content.dart';
 import 'package:settings/view/pages/settings_page.dart';
-import 'package:ubuntu_service/ubuntu_service.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import 'models/wifi_model.dart';
 
@@ -15,7 +14,7 @@ class ConnectionsPage extends StatefulWidget {
   const ConnectionsPage({super.key});
   static Widget create(BuildContext context) {
     return ChangeNotifierProvider<WifiModel>(
-      create: (_) => WifiModel(getService<NetworkManagerClient>()),
+      create: (_) => WifiModel(di<NetworkManagerClient>()),
       child: const ConnectionsPage(),
     );
   }
@@ -34,23 +33,43 @@ class ConnectionsPage extends StatefulWidget {
   State<ConnectionsPage> createState() => _ConnectionsPageState();
 }
 
-class _ConnectionsPageState extends State<ConnectionsPage> {
+class _ConnectionsPageState extends State<ConnectionsPage>
+    with SingleTickerProviderStateMixin {
+  late TabController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final wifiModel = context.watch<WifiModel>();
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: YaruWindowTitleBar(
-          titleSpacing: 20,
-          centerTitle: true,
-          border: BorderSide.none,
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          title: const SizedBox(
+    return Scaffold(
+      appBar: YaruWindowTitleBar(
+        titleSpacing: 20,
+        centerTitle: true,
+        border: BorderSide.none,
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: Text(context.l10n.connectionsPageTitle),
+      ),
+      body: Column(
+        children: [
+          SizedBox(
             width: 400,
-            child: TabBar(
-              tabs: [
+            child: YaruTabBar(
+              tabController: _controller,
+              tabs:
+                  // TODO: localize
+                  const [
                 TitleBarTab(
                   text: 'Wi-Fi',
                   iconData: YaruIcons.network_wireless,
@@ -62,28 +81,31 @@ class _ConnectionsPageState extends State<ConnectionsPage> {
                 TitleBarTab(
                   iconData: YaruIcons.network_cellular,
                   text: 'Cellular',
-                )
+                ),
               ],
             ),
           ),
-        ),
-        body: TabBarView(
-          children: [
-            wifiModel.isWifiDeviceAvailable
-                ? const WifiDevicesContent()
-                : const WifiAdaptorNotFound(),
-            const SettingsPage(
+          Expanded(
+            child: TabBarView(
+              controller: _controller,
               children: [
-                Text('Ethernet - Please implement 🥲️'),
+                wifiModel.isWifiDeviceAvailable
+                    ? const WifiDevicesContent()
+                    : const WifiAdaptorNotFound(),
+                const SettingsPage(
+                  children: [
+                    Text('Ethernet - Please implement 🥲️'),
+                  ],
+                ),
+                const SettingsPage(
+                  children: [
+                    Text('Cellular - Please implement 🥲️'),
+                  ],
+                ),
               ],
             ),
-            const SettingsPage(
-              children: [
-                Text('Cellular - Please implement 🥲️'),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

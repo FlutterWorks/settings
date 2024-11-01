@@ -10,12 +10,10 @@ import 'package:settings/view/common/settings_section.dart';
 import 'package:settings/view/common/yaru_single_info_row.dart';
 import 'package:settings/view/pages/settings_page.dart';
 import 'package:settings/view/pages/settings_simple_dialog.dart';
-import 'package:ubuntu_service/ubuntu_service.dart';
 import 'package:udisks/udisks.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:yaru_colors/yaru_colors.dart';
-import 'package:yaru_icons/yaru_icons.dart';
-import 'package:yaru_widgets/yaru_widgets.dart';
+import 'package:watch_it/watch_it.dart';
+import 'package:yaru/yaru.dart';
 
 import 'info_model.dart';
 
@@ -25,8 +23,8 @@ class InfoPage extends StatefulWidget {
   static Widget create(BuildContext context) {
     return ChangeNotifierProvider<InfoModel>(
       create: (_) => InfoModel(
-        hostnameService: getService<HostnameService>(),
-        uDisksClient: getService<UDisksClient>(),
+        hostnameService: di<HostnameService>(),
+        uDisksClient: di<UDisksClient>(),
       ),
       child: const InfoPage(),
     );
@@ -102,7 +100,7 @@ class _InfoPageState extends State<InfoPage> {
                   .textTheme
                   .displayMedium!
                   .copyWith(color: Theme.of(context).colorScheme.onSurface),
-            )
+            ),
           ],
         ),
         const SizedBox(height: 50),
@@ -178,11 +176,15 @@ class _InfoPageState extends State<InfoPage> {
                     model.gnomeVersion,
                     model.windowServer,
                   ).then(
-                    (value) => ScaffoldMessenger.of(context)
-                        .showSnackBar(sysInfoSnackBar),
+                    (value) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(sysInfoSnackBar);
+                      }
+                    },
                   );
                 },
-              )
+              ),
             ],
           ),
         ),
@@ -232,7 +234,7 @@ class _Computer extends StatelessWidget {
               ),
             ],
           ),
-        )
+        ),
       ],
     );
   }
@@ -285,9 +287,9 @@ class _HostnameSettingsState extends State<_HostnameSettings> {
             TextButton(
               onPressed: () => model.setHostname(_controller.value.text),
               child: const Text('Rename'),
-            )
+            ),
           ],
-        )
+        ),
       ],
     );
   }

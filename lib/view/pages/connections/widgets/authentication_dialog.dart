@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:settings/view/pages/connections/data/authentication.dart';
 import 'package:settings/view/pages/connections/models/access_point_model.dart';
-import 'package:yaru_icons/yaru_icons.dart';
+import 'package:yaru/yaru.dart';
 
 class AuthenticationDialog extends StatelessWidget {
   AuthenticationDialog({super.key});
@@ -42,7 +42,7 @@ class AuthenticationDialog extends StatelessWidget {
                 DropdownMenuItem(
                   value: 'a',
                   child: Text('Not Implemented yet'),
-                )
+                ),
               ],
             ),
           ),
@@ -90,7 +90,7 @@ class AuthenticationDialog extends StatelessWidget {
                 ),
               ),
             ),
-          )
+          ),
         ],
       ),
       actions: [
@@ -107,7 +107,7 @@ class AuthenticationDialog extends StatelessWidget {
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
           child: const Text('Cancel'),
-        )
+        ),
       ],
     );
   }
@@ -133,7 +133,7 @@ class _DialogRow extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 10),
-        Flexible(fit: FlexFit.loose, flex: 10, child: field)
+        Flexible(fit: FlexFit.loose, flex: 10, child: field),
       ],
     );
   }
